@@ -32,3 +32,19 @@ Manufacturer public manufacturer;
         manufacturer.manufacturerAddress = msg.sender;
         manufacturer.manufacturerName = _manufacturerName;
     }
+
+
+
+function createBatch(string memory _batchNumber, address _producer, string memory _sellerName, string memory _companyName, string memory _quantity, string memory _companyAddress) public onlyManufacturer {
+        require(batches[_batchNumber].producer == address(0), "Batch with this number already exists.");
+        Batch storage b = batches[_batchNumber];
+        b.producer = _producer;
+        b.sellerName = _sellerName;
+        b.companyName = _companyName;
+        b.batchNumber = _batchNumber;
+        b.quantity = _quantity;
+        b.companyAddress = _companyAddress;
+        b.status = Status.Pending;
+
+        producerBatches[_producer].push(_batchNumber);
+    }
