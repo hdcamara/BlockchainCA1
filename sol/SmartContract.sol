@@ -48,3 +48,33 @@ function createBatch(string memory _batchNumber, address _producer, string memor
 
         producerBatches[_producer].push(_batchNumber);
     }
+
+function getBatches(address _producer) public view returns (string[] memory) {
+        return producerBatches[_producer];
+    }
+
+    function verifyBatch(string memory _batchNumber) public view returns (address, string memory, string memory, string memory, string memory, string memory, string memory) {
+        Batch memory b = batches[_batchNumber];
+        string memory status;
+        if (b.status == Status.Pending) {
+            status = "Verification pending by the producer";
+        } else if (b.status == Status.Accepted) {
+            status = "Verification accepted by the producer";
+        } else if (b.status == Status.Rejected) {
+            status = "Verification rejected by the producer";
+        }
+        return (b.producer, b.sellerName, b.companyName, b.batchNumber, b.quantity, b.companyAddress, status);
+    }
+
+    function acceptBatch(string memory _batchNumber) public {
+        require(batches[_batchNumber].producer == msg.sender, "Only the producer can accept the batch.");
+        require(batches[_batchNumber].status == Status.Pending, "The batch must be in pending status.");
+        batches[_batchNumber].status = Status.Accepted;
+    }
+
+    function rejectBatch(string memory _batchNumber) public {
+        require(batches[_batchNumber].producer == msg.sender, "Only the producer can reject the batch.");
+        require(batches[_batchNumber].status == Status.Pending, "The batch must be in pending status.");
+        batches[_batchNumber].status = Status.Rejected;
+    }
+}
